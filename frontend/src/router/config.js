@@ -34,6 +34,15 @@ const options = {
           component: () => import('@/pages/search/SearchPage'),
         },
         {
+          path: 'List',
+          name: 'List',
+          meta: {
+            authority: '*',
+            icon: 'file-search'
+          },
+          component: () => import('@/pages/search/SearchPage'),
+        },
+        {
           path: 'Overview',
           name: 'Overview',
           meta: {
@@ -43,11 +52,29 @@ const options = {
           component: () => import('@/pages/overview/Overview'),
         },
         {
-          path: 'Graph',
-          name: 'Graph',
+          path: 'Result/:query/',
+          name: 'Result',
           meta: {
             authority: '*',
             icon: 'dot-chart'
+          },
+          component: () => import('@/pages/result/Result'),
+        },
+        {
+          path: 'Question',
+          name: 'Question',
+          meta: {
+            authority: '*',
+            icon: 'question-circle'
+          },
+          component: () => import('@/pages/backup/Analysis'),
+        },
+        {
+          path: 'Backup',
+          name: 'Backup',
+          meta: {
+            authority: '*',
+            icon: 'stop'
           },
           component: () => import('@/pages/backup/Analysis'),
         }

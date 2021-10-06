@@ -1,17 +1,61 @@
 <template>
-  <div class="overview" :style="`min-height: ${pageMinHeight}px`">
-      <div ref="graph" id="graph" style="max-height: 75vh"></div>
+  <div class="result" :style="`min-height: ${pageMinHeight}px`">
+    <a-row style="margin: 0 -12px">
+      <a-col style="padding: 0 12px" :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
+        <a-card :bordered="false" style="margin-top: 24px" title="Graph">
+          <div ref="graph" id="graph" style="max-height: 500px"></div>
+        </a-card>
+      </a-col>
+      <a-col style="padding: 0 12px" :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
+        <a-card :bordered="false" style="margin-top: 24px" title="List">
+          <div class="result-list">
+            <a-table
+                :dataSource="searchData"
+                :columns="tableColumns"
+                :pagination="{style: { marginBottom: 0 }, pageSize: 11}"
+                size="small"
+                rowKey="index"
+            >
+              <a href="#/" slot="keyword" slot-scope="text">{{ text }}</a>
+              <span slot="rang" slot-scope="text">{{ text }}</span>
+            </a-table>
+          </div>
+        </a-card>
+      </a-col>
+    </a-row>
   </div>
 </template>
 <script>
 import {mapState} from 'vuex'
 import ForceGraph3D from "3d-force-graph";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import {UnrealBloomPass} from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+
+const searchData = []
+const columns = [
+  {
+    dataIndex: 'index',
+    key: 'Index'
+  },
+  {
+    dataIndex: 'subject',
+    key: 'Subject',
+  },
+  {
+    dataIndex: 'relation',
+    key: 'Relation',
+  },
+  {
+    dataIndex: 'object',
+    key: 'Object',
+  }
+]
 
 export default {
-  name: "overview",
+  name: "result",
   data() {
     return {
+      searchData,
+      columns,
       myGraph: null,
       graphData: null,
       db: {
@@ -19,7 +63,7 @@ export default {
         user: 'neo4j',
         password: '1234'
       },
-      limitation: 1000,
+      name: this.$route.params.query,
     };
   },
   mounted() {
@@ -27,6 +71,13 @@ export default {
   },
   computed: {
     ...mapState('setting', ['pageMinHeight']),
+    tableColumns() {
+      let columns = this.columns
+      return columns.map(item => {
+        item.title = this.$t(item.key)
+        return item
+      })
+    }
   },
   methods: {
     async initGraph() {
@@ -37,8 +88,8 @@ export default {
       })(this.$refs.graph)
           /*------------------------------------------- 画布配置 -------------------------------------------*/
           .backgroundColor("black")                                                           // 背景颜色，支持内置颜色和RGB
-          .width(this.$refs.graph.parentElement.offsetWidth)                                       // 画布宽度(充满父级容器)
-          .height(this.$refs.graph.parentElement.offsetHeight + 150)                           // 画布高度(充满父级容器)
+          .width(800)                                       // 画布宽度(充满父级容器)
+          .height(500)                           // 画布高度(充满父级容器)
           .showNavInfo(false)                                                               // 是否显示底部导航提示信息
           /*------------------------------------------- 节点配置 -------------------------------------------*/
           // .nodeRelSize(1)                                                                           // 节点大小（支持数值）
@@ -57,18 +108,18 @@ export default {
                 3000  // ms transition duration)
             )
           })
-          /*------------------------------------------- 边的配置 -------------------------------------------*/
-          // .linkVisibility(true)                                                                    // 是否显示边
-          // .linkLabel(r => r.type)                                                      // 边的标签显示（鼠标滑到边上显示）
-          // .linkDirectionalArrowLength(3.5)                                                         // 边的指向箭头长度
-          // .linkDirectionalArrowRelPos(1)                                                           // 边的标签显示（鼠标滑到边上显示）
-          // .linkCurvature(0.25)                                                                     // 边的透明度
-          // .linkDirectionalParticles(5)                                                             // 边粒子：数量
-          // .linkDirectionalParticleSpeed(1)                                                         // 边粒子：移动速度
-          // .linkDirectionalParticleWidth(0.3)                                                       // 边粒子：大小
-          // .linkColor(() => 'RGB(170,170,170)')                                                       // 边颜色
-          // .linkAutoColorBy(r => r.type)                                                            // 边颜色自动化分
-          // .linkOpacity(0.5)                                                                        // 边透明度（越小越透明）
+      /*------------------------------------------- 边的配置 -------------------------------------------*/
+      // .linkVisibility(true)                                                                    // 是否显示边
+      // .linkLabel(r => r.type)                                                      // 边的标签显示（鼠标滑到边上显示）
+      // .linkDirectionalArrowLength(3.5)                                                         // 边的指向箭头长度
+      // .linkDirectionalArrowRelPos(1)                                                           // 边的标签显示（鼠标滑到边上显示）
+      // .linkCurvature(0.25)                                                                     // 边的透明度
+      // .linkDirectionalParticles(5)                                                             // 边粒子：数量
+      // .linkDirectionalParticleSpeed(1)                                                         // 边粒子：移动速度
+      // .linkDirectionalParticleWidth(0.3)                                                       // 边粒子：大小
+      // .linkColor(() => 'RGB(170,170,170)')                                                       // 边颜色
+      // .linkAutoColorBy(r => r.type)                                                            // 边颜色自动化分
+      // .linkOpacity(0.5)                                                                        // 边透明度（越小越透明）
 
       //发光
       const bloomPass = new UnrealBloomPass();
@@ -77,7 +128,7 @@ export default {
       bloomPass.threshold = 0.1;
       this.myGraph.postProcessingComposer().addPass(bloomPass);
 
-      let graph_info = await this.getCyperResult(this.limitation)
+      let graph_info = await this.getCyperResult(this.name)
       /** 构造3D-Graph数据的边 */
       const links = Object.values(graph_info.rel_info);
       /** 构造3D-Graph数据的节点 */
@@ -87,9 +138,6 @@ export default {
       this.myGraph.graphData({
         nodes: nodes, links: links
       })
-      // console.log({
-      //   nodes: nodes, links: links
-      // })
 
       /*  修改边长度,同d3引擎用法  */
       // this.myGraph.d3Force('link').distance(400);
@@ -110,19 +158,19 @@ export default {
      * @param limit_items
      * @returns {Promise<node_info, rel_info>}
      */
-    async getCyperResult(limit_items) {
+    async getCyperResult(name) {
       const start = new Date()
       const neo4j = require('neo4j-driver')
       const driver = neo4j.driver(this.db.uri, neo4j.auth.basic(this.db.user, this.db.password))
       const session = driver.session()
       const result = await session.run(
           'MATCH (n)-[r]->(m) ' +
+          "WHERE n.entity_name =~ $name " +
           'RETURN ' +
           'id(n) as source, labels(n) as source_labels, properties(n) as source_attrs, ' +
           'id(m) as target, labels(m) as target_labels, properties(m) as target_attrs, ' +
-          'id(r) as link,     type(r) as r_type,        properties(r) as r_attrs ' +
-          'LIMIT $limit_items ',
-          {limit_items: neo4j.int(limit_items)}
+          'id(r) as link,     type(r) as r_type,        properties(r) as r_attrs ',
+          {name: "(?i).*" + name + ".*"}
       );
 
       /* 存储节点和边信息
@@ -131,6 +179,7 @@ export default {
       */
       const node_info = {}
       const rel_info = {}
+      let i = 0;
       result.records.map(r => {
         node_info[r.get('source').toString()] = {
           labels: r.get('source_labels').toString(),
@@ -146,8 +195,14 @@ export default {
           source: r.get('source').toString(),
           target: r.get('target').toString()
         }
+        this.searchData.push({
+          index: i + 1,
+          subject: r.get('source_attrs').entity_name,
+          relation: r.get('r_type').toString(),
+          object: r.get('target_attrs').entity_name,
+        });
+        i += 1;
       });
-      // console.log(node_info);
       console.log(Object.keys(node_info).length + " nodes loaded and " + Object.keys(rel_info).length + " links loaded in " + (new Date() - start) + " ms.");
       return {
         node_info,
@@ -157,3 +212,42 @@ export default {
   }
 };
 </script>
+<style lang="less" scoped>
+.num-info {
+  .title {
+    color: @text-color-second;
+    font-size: 14px;
+    height: 22px;
+    line-height: 22px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    white-space: nowrap;
+  }
+
+  .value {
+    .total {
+      color: @title-color;
+      display: inline-block;
+      line-height: 32px;
+      height: 32px;
+      font-size: 24px;
+      margin-right: 32px;
+    }
+
+    .subtotal {
+      color: @text-color-second;
+      font-size: 16px;
+      vertical-align: top;
+      margin-right: 0;
+
+      i {
+        font-size: 12px;
+        color: red;
+        transform: scale(.82);
+        margin-left: 4px;
+      }
+    }
+  }
+}
+</style>
