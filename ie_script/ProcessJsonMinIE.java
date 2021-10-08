@@ -9,12 +9,13 @@ import de.uni_mannheim.minie.annotation.AnnotatedProposition;
 import de.uni_mannheim.utils.coreNLP.CoreNLPUtils;
 
 import java.io.*;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ProcessJson {
+public class ProcessJsonMinIE {
     //run this function to start process minie
     public static void process(String filename) {
         String json = readJsonFile("C:\\Users\\pross\\Desktop\\project\\github\\ie_script\\data_json\\" + filename + ".json");
@@ -28,7 +29,10 @@ public class ProcessJson {
             long costTime = System.currentTimeMillis() - startTime;
             long avgTime = costTime / (i + 1);
             long leftTime = avgTime * (jsonArray.size() - i);
-            System.out.println((i + 1) + "/" + jsonArray.size() + "     Time:" + costTime / 1000 + "/" + leftTime / 1000 + "/" + avgTime / 1000);
+
+            //print like tqdm
+            String print = (i + 1) + "/" + jsonArray.size() + " costTime(s):" + String.format("%-8s", costTime / 1000) + " leftTime(s):" + String.format("%-8s", leftTime / 1000) + " avgTime(s):" + String.format("%-8s", avgTime / 1000.0);
+            System.out.println(print);
         }
 
         // need to create csv file first
