@@ -9,7 +9,6 @@ import de.uni_mannheim.minie.annotation.AnnotatedProposition;
 import de.uni_mannheim.utils.coreNLP.CoreNLPUtils;
 
 import java.io.*;
-import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,15 +23,17 @@ public class ProcessJsonMinIE {
 
         long startTime = System.currentTimeMillis();
         for (int i = 0; i < jsonArray.size(); i++) {
-            FactsBean factsBean = query((String) jsonArray.get(i));
-            facts.addAll(factsBean.facts);
-            long costTime = System.currentTimeMillis() - startTime;
-            long avgTime = costTime / (i + 1);
-            long leftTime = avgTime * (jsonArray.size() - i);
+            if (((String) jsonArray.get(i)).length() > 1) { //sometimes null string
+                FactsBean factsBean = query((String) jsonArray.get(i));
+                facts.addAll(factsBean.facts);
+                long costTime = System.currentTimeMillis() - startTime;
+                long avgTime = costTime / (i + 1);
+                long leftTime = avgTime * (jsonArray.size() - i);
 
-            //print like tqdm
-            String print = (i + 1) + "/" + jsonArray.size() + " costTime(s):" + String.format("%-8s", costTime / 1000) + " leftTime(s):" + String.format("%-8s", leftTime / 1000) + " avgTime(s):" + String.format("%-8s", avgTime / 1000.0);
-            System.out.println(print);
+                //print like tqdm
+                String print = (i + 1) + "/" + jsonArray.size() + " costTime(s):" + String.format("%-8s", costTime / 1000) + " leftTime(s):" + String.format("%-8s", leftTime / 1000) + " avgTime(s):" + String.format("%-8s", avgTime / 1000.0);
+                System.out.println("[" + filename + "]" + print);
+            }
         }
 
         // need to create csv file first
