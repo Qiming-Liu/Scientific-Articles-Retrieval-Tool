@@ -1,2 +1,2 @@
-import Overview from './Overview'
-export default Overview
+import overview from './overview'
+export default overview

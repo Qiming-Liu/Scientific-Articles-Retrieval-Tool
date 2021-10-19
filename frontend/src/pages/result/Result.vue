@@ -30,44 +30,45 @@ import {mapState} from 'vuex'
 import ForceGraph3D from "3d-force-graph";
 import {UnrealBloomPass} from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
-const searchData = []
-const columns = [
-  {
-    dataIndex: 'index',
-    key: 'Index'
-  },
-  {
-    dataIndex: 'subject',
-    key: 'Subject',
-  },
-  {
-    dataIndex: 'relation',
-    key: 'Relation',
-  },
-  {
-    dataIndex: 'object',
-    key: 'Object',
-  }
-]
-
 export default {
   name: "result",
   data() {
     return {
-      searchData,
-      columns,
-      myGraph: null,
-      graphData: null,
-      db: {
-        uri: 'bolt://localhost:7687',
-        user: 'neo4j',
-        password: '1234'
-      },
+      searchData: [],
+      columns: [
+        {
+          dataIndex: 'index',
+          key: 'Index'
+        },
+        {
+          dataIndex: 'subject',
+          key: 'Subject',
+        },
+        {
+          dataIndex: 'relation',
+          key: 'Relation',
+        },
+        {
+          dataIndex: 'object',
+          key: 'Object',
+        }
+      ],
+      graph: null,
       name: this.$route.params.query,
     };
   },
   mounted() {
-    this.initGraph()
+    this.initGraph().then(() => {
+      let links = this.graph.graphData().links;
+      for (let i = 0; i < links.length; i++) {
+        this.searchData.push({
+          index: i + 1,
+          subject: links[i].source.name,
+          relation: links[i].type,
+          object: links[i].target.name,
+        });
+      }
+    });
   },
   computed: {
     ...mapState('setting', ['pageMinHeight']),
@@ -81,173 +82,78 @@ export default {
   },
   methods: {
     async initGraph() {
-      /********************************************** 1.创建图 **********************************************/
-      this.myGraph = ForceGraph3D({
-        controlType: "trackball",                                                                 // orbit沿2d轨迹绕着拖动，fly 固定不动
+      let limit = this.$route.query.limit;
+      let bloom = this.$route.query.bloom;
+      let name = this.$route.query.name;
+      if (limit === undefined) {
+        limit = "1000";
+      }
+      if (bloom === undefined) {
+        bloom = "1";
+      }
+      if (name === undefined) {
+        name = "covid";
+      }
+
+      this.graph = ForceGraph3D({
+        controlType: "trackball",
         rendererConfig: {antialias: true, alpha: true}
       })(this.$refs.graph)
-          /*------------------------------------------- 画布配置 -------------------------------------------*/
-          .backgroundColor("black")                                                           // 背景颜色，支持内置颜色和RGB
-          .width(800)                                       // 画布宽度(充满父级容器)
-          .height(500)                           // 画布高度(充满父级容器)
-          .showNavInfo(false)                                                               // 是否显示底部导航提示信息
-          /*------------------------------------------- 节点配置 -------------------------------------------*/
-          // .nodeRelSize(1)                                                                           // 节点大小（支持数值）
-          // .nodeVal(node => node.size * 0.05)                                                        // 节点大小（支持回调）
-          .nodeAutoColorBy('id')                                                                    // 节点颜色
-          .nodeLabel("labels")                                                          // 节点标签显示内容（鼠标滑到节点显示，支持直接写节点属性名称）
-          .nodeLabel(node => node.attrs.entity_name)             // 节点标签显示内容（鼠标滑到节点显示，也可以使用回调函数）
-          .onNodeHover(node => this.$refs.graph.style.cursor = node ? 'pointer' : null)     // 鼠标滑到节点上改变指针
-          .onNodeClick(node => {                                                            // 点击节点事件（视角转移到该节点）
+          .jsonUrl('http://127.0.0.1:5000/search?limit=' + limit + '&name=' + name)
+          .backgroundColor("black")
+          .width(this.$refs.graph.parentElement.offsetWidth)
+          .height(this.$refs.graph.parentElement.offsetHeight + 150)
+          .showNavInfo(false)
+
+          .nodeAutoColorBy('id')
+          .onNodeHover(node => this.$refs.graph.style.cursor = node ? 'pointer' : null)
+          .onNodeClick(node => {//camera
             // Aim at node from outside it
-            const distance = 100;
-            const distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
-            this.myGraph.cameraPosition(
+            let distance = 200;
+            let distRatio = 1 + distance / Math.hypot(node.x, node.y, node.z);
+            this.graph.cameraPosition(
                 {x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio}, // new position
                 node, // lookAt ({ x, y, z })
                 3000  // ms transition duration)
             )
           })
-      /*------------------------------------------- 边的配置 -------------------------------------------*/
-      // .linkVisibility(true)                                                                    // 是否显示边
-      // .linkLabel(r => r.type)                                                      // 边的标签显示（鼠标滑到边上显示）
-      // .linkDirectionalArrowLength(3.5)                                                         // 边的指向箭头长度
-      // .linkDirectionalArrowRelPos(1)                                                           // 边的标签显示（鼠标滑到边上显示）
-      // .linkCurvature(0.25)                                                                     // 边的透明度
-      // .linkDirectionalParticles(5)                                                             // 边粒子：数量
-      // .linkDirectionalParticleSpeed(1)                                                         // 边粒子：移动速度
-      // .linkDirectionalParticleWidth(0.3)                                                       // 边粒子：大小
-      // .linkColor(() => 'RGB(170,170,170)')                                                       // 边颜色
-      // .linkAutoColorBy(r => r.type)                                                            // 边颜色自动化分
-      // .linkOpacity(0.5)                                                                        // 边透明度（越小越透明）
+          .onNodeDragEnd(node => {
+            node.fx = node.x;
+            node.fy = node.y;
+            node.fz = node.z;
+          })
 
-      //发光
-      const bloomPass = new UnrealBloomPass();
-      bloomPass.strength = 3;
-      bloomPass.radius = 1;
-      bloomPass.threshold = 0.1;
-      this.myGraph.postProcessingComposer().addPass(bloomPass);
+          .linkLabel(r => r.type)
+          .linkWidth(1)
+          .linkAutoColorBy(r => r.type)
+          .linkDirectionalArrowLength(5)
+          .linkDirectionalArrowRelPos(1)
+          .linkOpacity(0.9)
 
-      let graph_info = await this.getCyperResult(this.name)
-      /** 构造3D-Graph数据的边 */
-      const links = Object.values(graph_info.rel_info);
-      /** 构造3D-Graph数据的节点 */
-      const nodes = Object.entries(graph_info.node_info).map(entry => {
-        return {id: entry[0], labels: entry[1].labels, attrs: entry[1].attrs}
-      })
-      this.myGraph.graphData({
-        nodes: nodes, links: links
-      })
-
-      /*  修改边长度,同d3引擎用法  */
-      // this.myGraph.d3Force('link').distance(400);
-      // /*  设置图谱自动旋转  */
-      // const distance = 2000;
-      // let angle = 0;
-      // setInterval(() => {
-      //   this.myGraph.cameraPosition({
-      //     x: distance * Math.sin(angle),
-      //     y: distance * Math.sin(angle),
-      //     z: distance * Math.cos(angle)
-      //   });
-      //   angle += Math.PI / 1000;
-      // }, 100);
-    },
-    /**
-     * 读取neo4j结果
-     * @param limit_items
-     * @returns {Promise<node_info, rel_info>}
-     */
-    async getCyperResult(name) {
-      const start = new Date()
-      const neo4j = require('neo4j-driver')
-      const driver = neo4j.driver(this.db.uri, neo4j.auth.basic(this.db.user, this.db.password))
-      const session = driver.session()
-      const result = await session.run(
-          'MATCH (n)-[r]->(m) ' +
-          "WHERE n.entity_name =~ $name " +
-          'RETURN ' +
-          'id(n) as source, labels(n) as source_labels, properties(n) as source_attrs, ' +
-          'id(m) as target, labels(m) as target_labels, properties(m) as target_attrs, ' +
-          'id(r) as link,     type(r) as r_type,        properties(r) as r_attrs ',
-          {name: "(?i).*" + name + ".*"}
-      );
-
-      /* 存储节点和边信息
-      * node_info[节点ID] = {节点标签：list, 节点属性:dict}
-      *   rel_info[边ID] = {边类别：str,   边属性:dict}
-      */
-      const node_info = {}
-      const rel_info = {}
-      let i = 0;
-      result.records.map(r => {
-        node_info[r.get('source').toString()] = {
-          labels: r.get('source_labels').toString(),
-          attrs: r.get('source_attrs')
-        };
-        node_info[r.get('target').toString()] = {
-          labels: r.get('target_labels').toString(),
-          attrs: r.get('target_attrs')
-        }
-        rel_info[r.get('link').toString()] = {
-          type: r.get('r_type').toString(),
-          attrs: r.get('r_attrs'),
-          source: r.get('source').toString(),
-          target: r.get('target').toString()
-        }
-        this.searchData.push({
-          index: i + 1,
-          subject: r.get('source_attrs').entity_name,
-          relation: r.get('r_type').toString(),
-          object: r.get('target_attrs').entity_name,
-        });
-        i += 1;
-      });
-      console.log(Object.keys(node_info).length + " nodes loaded and " + Object.keys(rel_info).length + " links loaded in " + (new Date() - start) + " ms.");
-      return {
-        node_info,
-        rel_info
+      //bloom
+      if (bloom === "1") {
+        let bloomPass = new UnrealBloomPass();
+        bloomPass.strength = 3;
+        bloomPass.radius = 1;
+        bloomPass.threshold = 0.1;
+        this.graph.postProcessingComposer().addPass(bloomPass);
       }
+
+      this.graph.onEngineStop(() => {
+        let links = this.graph.graphData().links;
+        for (let i = 0; i < links.length; i++) {
+          this.searchData.push({
+            index: i + 1,
+            subject: links[i].source.name,
+            relation: links[i].type,
+            object: links[i].target.name,
+          });
+        }
+      })
     },
   }
 };
 </script>
-<style lang="less" scoped>
-.num-info {
-  .title {
-    color: @text-color-second;
-    font-size: 14px;
-    height: 22px;
-    line-height: 22px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: break-all;
-    white-space: nowrap;
-  }
-
-  .value {
-    .total {
-      color: @title-color;
-      display: inline-block;
-      line-height: 32px;
-      height: 32px;
-      font-size: 24px;
-      margin-right: 32px;
-    }
-
-    .subtotal {
-      color: @text-color-second;
-      font-size: 16px;
-      vertical-align: top;
-      margin-right: 0;
-
-      i {
-        font-size: 12px;
-        color: red;
-        transform: scale(.82);
-        margin-left: 4px;
-      }
-    }
-  }
-}
+<style scoped lang="less">
+@import "index.less";
 </style>

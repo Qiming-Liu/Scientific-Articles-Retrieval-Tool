@@ -4,7 +4,7 @@
       <img width="300" src="@/assets/img/search.png" style="margin: 0 auto;"/>
     </div>
     <a-input-search
-        placeholder="input search text"
+        placeholder="Input search text or question"
         enter-button="Search"
         size="large"
         @search="onSearch"
@@ -25,7 +25,10 @@ export default {
   },
   methods: {
     onSearch(value) {
-      this.$router.push('/Result/' + value);
+      if (value === "") {
+        return;
+      }
+      this.$router.push('/result?name=' + value);
     },
   },
 }

@@ -25,40 +25,31 @@ const options = {
       redirect: '/search',
       children: [
         {
-          path: 'Search',
-          name: 'Search',
+          path: 'search',
+          name: 'search',
           meta: {
             authority: '*',
             icon: 'search'
           },
-          component: () => import('@/pages/search/SearchPage'),
+          component: () => import('@/pages/search/search'),
         },
         {
-          path: 'List',
-          name: 'List',
-          meta: {
-            authority: '*',
-            icon: 'file-search'
-          },
-          component: () => import('@/pages/search/SearchPage'),
-        },
-        {
-          path: 'Overview',
-          name: 'Overview',
+          path: 'overview',
+          name: 'overview',
           meta: {
             authority: '*',
             icon: 'radar-chart'
           },
-          component: () => import('@/pages/overview/Overview'),
+          component: () => import('@/pages/overview/overview'),
         },
         {
-          path: 'Result/:query/',
-          name: 'Result',
+          path: 'result',
+          name: 'result',
           meta: {
             authority: '*',
             icon: 'dot-chart'
           },
-          component: () => import('@/pages/result/Result'),
+          component: () => import('@/pages/result/result'),
         },
         {
           path: 'Question',
