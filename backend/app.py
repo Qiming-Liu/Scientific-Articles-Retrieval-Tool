@@ -1,32 +1,37 @@
-# flask
 from flask import Flask, g, Response, request
 from flask_cors import CORS
-import os
 
 from json import dumps
 from neo4j import GraphDatabase
 
-path = os.getcwd()
-# Question answering query
-# abstract_data = pickle.load(open('./abstract_data.pkl', 'rb'))
-# abstract_embed = pickle.load(open('./abstract_embed.pkl', 'rb'))
-# def query_qa(text):
-#     corr = np.inner(embed([text]).numpy(), abstract_embed)
-#     return abstract_data[np.argmax(corr)]
+import pickle
+import numpy as np
+import os
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+from tensorflow_hub import load
 
 # neo4j
 uri = "bolt://localhost:7687"
+neo4jVersion = "4.3.5"
+username = "neo4j"
 password = "1234"
 database = "kg-minie"
-
-username = "neo4j"
-neo4jVersion = "4.3.5"
 
 driver = GraphDatabase.driver(uri, auth=(username, password))
 
 # flask
 app = Flask(__name__, instance_path="C:\\Users\\pross\\Desktop\\project\\github\\backend")
 CORS(app)
+
+# question answering
+print(' * Loading model')
+path = "C:\\Users\\pross\\Desktop\\project\\github\\ie_script\\"
+embed = load(path + "model")
+print(' * Loading data')
+abstract_data = pickle.load(open(path + 'abstract_data.pkl', 'rb'))
+print(' * Loading embed')
+abstract_embed = pickle.load(open(path + 'abstract_embed.pkl', 'rb'))
 
 
 def get_db():
@@ -45,6 +50,25 @@ def close_db(error):
 def get_index():
     return "<p>Hello, World!</p>"
     # return app.send_static_file('index.html')
+
+
+@app.route("/question")
+def question():
+    try:
+        text = request.args["text"]
+    except KeyError:
+        return []
+    else:
+        k = int(request.args.get("k", 1))
+        corr = np.inner(embed([text]).numpy(), abstract_embed)[0]
+        index = [np.argmax(corr)] if k == 1 else (-corr).argsort()[:k]
+        answer = []
+        for i in index:
+            answer.append({
+                'score': round(corr[i], 2),
+                'data': abstract_data[i]
+            })
+        return Response(dumps(answer), mimetype="application/json")
 
 
 @app.route("/overview")
@@ -85,7 +109,7 @@ def overview():
 
 
 @app.route("/search")
-def get_search():
+def search():
     try:
         name = request.args["name"]
     except KeyError:
@@ -129,4 +153,4 @@ def get_search():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)

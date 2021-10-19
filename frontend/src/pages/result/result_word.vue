@@ -2,12 +2,12 @@
   <div class="result" :style="`min-height: ${pageMinHeight}px`">
     <a-row style="margin: 0 -12px">
       <a-col style="padding: 0 12px" :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-        <a-card :bordered="false" style="margin-top: 24px" title="Graph">
+        <a-card id="graph-card" style="margin-top: 24px" title="Graph">
           <div ref="graph" id="graph" style="max-height: 500px"></div>
         </a-card>
       </a-col>
       <a-col style="padding: 0 12px" :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
-        <a-card :bordered="false" style="margin-top: 24px" title="List">
+        <a-card style="margin-top: 24px" title="List">
           <div class="result-list">
             <a-table
                 :dataSource="searchData"
@@ -16,8 +16,6 @@
                 size="small"
                 rowKey="index"
             >
-              <a href="#/" slot="keyword" slot-scope="text">{{ text }}</a>
-              <span slot="rang" slot-scope="text">{{ text }}</span>
             </a-table>
           </div>
         </a-card>
@@ -58,16 +56,11 @@ export default {
     };
   },
   mounted() {
-    this.initGraph().then(() => {
-      let links = this.graph.graphData().links;
-      for (let i = 0; i < links.length; i++) {
-        this.searchData.push({
-          index: i + 1,
-          subject: links[i].source.name,
-          relation: links[i].type,
-          object: links[i].target.name,
-        });
-      }
+    this.$nextTick(()=>{
+      this.initGraph().then(()=>{
+        this.graph.width(this.$refs.graph.clientWidth)
+        this.graph.height(this.$refs.graph.clientHeight)
+      });
     });
   },
   computed: {
@@ -94,15 +87,12 @@ export default {
       if (name === undefined) {
         name = "covid";
       }
-
       this.graph = ForceGraph3D({
         controlType: "trackball",
         rendererConfig: {antialias: true, alpha: true}
       })(this.$refs.graph)
-          .jsonUrl('http://127.0.0.1:5000/search?limit=' + limit + '&name=' + name)
+          .jsonUrl(process.env.VUE_APP_BACKEND_URL + '/search?limit=' + limit + '&name=' + name)
           .backgroundColor("black")
-          .width(this.$refs.graph.parentElement.offsetWidth)
-          .height(this.$refs.graph.parentElement.offsetHeight + 150)
           .showNavInfo(false)
 
           .nodeAutoColorBy('id')
@@ -139,8 +129,11 @@ export default {
         this.graph.postProcessingComposer().addPass(bloomPass);
       }
 
-      this.graph.onEngineStop(() => {
+      let setList = setInterval(() => {
         let links = this.graph.graphData().links;
+        if (links.length > 0) {
+          clearInterval(setList);
+        }
         for (let i = 0; i < links.length; i++) {
           this.searchData.push({
             index: i + 1,
@@ -149,11 +142,13 @@ export default {
             object: links[i].target.name,
           });
         }
-      })
+      }, 1000)
     },
   }
 };
 </script>
-<style scoped lang="less">
-@import "index.less";
+<style>
+#graph-card .ant-card-body {
+  padding: 0 !important;
+}
 </style>

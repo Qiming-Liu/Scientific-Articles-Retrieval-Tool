@@ -36,7 +36,7 @@ export default {
         controlType: "trackball",
         rendererConfig: {antialias: true, alpha: true}
       })(this.$refs.graph)
-          .jsonUrl('http://127.0.0.1:5000/overview?limit=' + limit)
+          .jsonUrl(process.env.VUE_APP_BACKEND_URL + '/overview?limit=' + limit)
           .backgroundColor("black")
           .width(this.$refs.graph.parentElement.offsetWidth)
           .height(this.$refs.graph.parentElement.offsetHeight + 150)
@@ -79,6 +79,3 @@ export default {
   }
 };
 </script>
-<style scoped lang="less">
-@import "index.less";
-</style>

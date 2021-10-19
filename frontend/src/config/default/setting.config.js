@@ -13,7 +13,7 @@ module.exports = {
   fixedTabs: false,                      //固定页签头，true:固定，false:不固定
   pageWidth: 'fixed',                   //内容区域宽度，fixed:固定宽度，fluid:流式宽度
   weekMode: false,                      //色弱模式，true:开启，false:不开启
-  multiPage: false,                     //多页签模式，true:开启，false:不开启
+  multiPage: true,                     //多页签模式，true:开启，false:不开启
   cachePage: true,                      //是否缓存页面数据，仅多页签模式下生效，true 缓存, false 不缓存
   hideSetting: true,                   //隐藏设置抽屉，true:隐藏，false:不隐藏
   systemName: 'Retrieval Tool',         //系统名称

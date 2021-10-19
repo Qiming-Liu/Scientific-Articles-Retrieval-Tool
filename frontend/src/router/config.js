@@ -5,7 +5,7 @@ const options = {
   routes: [
     {
       path: '/login',
-      name: 'Login',
+      name: 'login',
       component: () => import('@/pages/login')
     },
     {
@@ -25,49 +25,40 @@ const options = {
       redirect: '/search',
       children: [
         {
-          path: 'search',
+          path: '/search',
           name: 'search',
           meta: {
             authority: '*',
             icon: 'search'
           },
-          component: () => import('@/pages/search/search'),
+          component: () => import('@/pages/search'),
         },
         {
-          path: 'overview',
+          path: '/overview',
           name: 'overview',
           meta: {
             authority: '*',
             icon: 'radar-chart'
           },
-          component: () => import('@/pages/overview/overview'),
+          component: () => import('@/pages/overview'),
         },
         {
-          path: 'result',
+          path: '/result_word',
           name: 'result',
           meta: {
             authority: '*',
-            icon: 'dot-chart'
+            invisible: 'true',
           },
-          component: () => import('@/pages/result/result'),
+          component: () => import('@/pages/result/result_word'),
         },
         {
-          path: 'Question',
-          name: 'Question',
+          path: '/result_sent',
+          name: 'result',
           meta: {
             authority: '*',
-            icon: 'question-circle'
+            invisible: 'true',
           },
-          component: () => import('@/pages/backup/Analysis'),
-        },
-        {
-          path: 'Backup',
-          name: 'Backup',
-          meta: {
-            authority: '*',
-            icon: 'stop'
-          },
-          component: () => import('@/pages/backup/Analysis'),
+          component: () => import('@/pages/result/result_sent'),
         }
       ]
     },

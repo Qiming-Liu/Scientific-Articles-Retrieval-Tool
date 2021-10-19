@@ -24,11 +24,34 @@ export default {
     ...mapState('setting', ['pageMinHeight']),
   },
   methods: {
+    startsWithAny(prefixes, string) {
+      for (let prefix of prefixes) {
+        if (string.startsWith(prefix))
+          return true;
+      }
+      return false;
+    },
+    endsWithAny(suffixes, string) {
+      for (let suffix of suffixes) {
+        if (string.endsWith(suffix))
+          return true;
+      }
+      return false;
+    },
     onSearch(value) {
       if (value === "") {
         return;
       }
-      this.$router.push('/result?name=' + value);
+      value = value.toLowerCase();
+      //判断是否为句子
+      // 1. 单词数大于3 or 2.以.!?结尾 or 3.以疑问词开头
+      let prefixes = ['which', 'what', 'whose', 'who', 'whom', 'where', 'whither', 'whence', 'when', 'how', 'why', 'whether'];
+      let suffixes = ['.', '!', '?'];
+      if (value.split(' ').length > 3 || this.startsWithAny(prefixes, value) || this.endsWithAny(suffixes, value)) {
+        this.$router.push('/result_sent?text=' + encodeURI(value));
+      } else {
+        this.$router.push('/result_word?name=' + encodeURI(value));
+      }
     },
   },
 }
