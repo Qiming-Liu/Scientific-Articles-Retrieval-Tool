@@ -1,9 +1,19 @@
 <template>
   <div class="result" :style="`min-height: ${pageMinHeight}px`">
     <a-row style="margin: 0 -12px">
-      <a-col style="padding: 0 12px" :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
+      <a-col style="padding: 0 12px" :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
+        <a-card id="header" :title="'Question: [' + this.$route.query.text + ']'">
+
+        </a-card>
+      </a-col>
+      <a-col style="padding: 0 12px" :xl="15" :lg="24" :md="24" :sm="24" :xs="24">
         <a-card :loading="loading" style="margin-top: 24px" title="Answer">
-          <ranking-list title="Rank" :list="rankList"/>
+          <ranking-list :list="rankList" :onclick="onclick"/>
+        </a-card>
+      </a-col>
+      <a-col style="padding: 0 12px" :xl="6" :lg="24" :md="24" :sm="24" :xs="24">
+        <a-card :loading="loading" style="margin-top: 24px" :title="'Top ' + this.top">
+          <p class="full-text" v-html="text"></p>
         </a-card>
       </a-col>
     </a-row>
@@ -20,6 +30,8 @@ export default {
     return {
       rankList: [],
       loading: true,
+      text: '',
+      top: '1'
     }
   },
   created() {
@@ -32,6 +44,24 @@ export default {
   },
   components: {RankingList},
   methods: {
+    onclick(index) {
+      this.text = this.highlight(this.rankList[index].name);
+      this.top = index + 1;
+    },
+    highlight(text) {
+      let keywords = this.$route.query.text.split(' ');
+      let str = text.split(' ');
+      if (keywords && keywords.length > 0) {
+        for (let i = 0; i < str.length; i++) {
+          for (let j = 0; j < keywords.length; j++) {
+            if (str[i].toLowerCase().indexOf(keywords[j]) !== -1 && str[i].length - keywords[j].length < 3) {
+              str[i] = '<span class="highlight"><b>' + str[i] + '</b></span>';
+            }
+          }
+        }
+      }
+      return str.join(' ');
+    },
     query() {
       let text = this.$route.query.text;
       let k = this.$route.query.k;
@@ -50,20 +80,35 @@ export default {
               let value = answer[i].data
               value = value.slice(0, 1).toUpperCase() + value.slice(1)
               this.rankList.push({
-                name: value ? (value.length > 90 ? (value.substring(0, 90)) + "..." : value) : "",
+                name: value,
                 total: answer[i].score
               })
             }
             this.loading = false;
+            this.text = this.highlight(this.rankList[0].name);
           })
           .catch((error) => {
             // handle error
             console.log(error);
           })
           .then(() => {
-            console.log('started')
+            //always
           });
     }
   }
 }
 </script>
+<style>
+.full-text {
+  line-height: 24px;
+  color: black;
+}
+
+.highlight {
+  color: red !important;
+}
+
+#header {
+  border: 0;
+}
+</style>

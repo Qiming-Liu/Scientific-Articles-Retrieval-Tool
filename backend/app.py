@@ -26,12 +26,12 @@ CORS(app)
 
 # question answering
 print(' * Loading model')
-path = "C:\\Users\\pross\\Desktop\\project\\github\\ie_script\\"
-embed = load(path + "model")
+path = "C:\\Users\\pross\\Desktop\\project\\github\\ie_script"
+embed = load(path + "\\model")
 print(' * Loading data')
-abstract_data = pickle.load(open(path + 'abstract_data.pkl', 'rb'))
+abstract_data = pickle.load(open(path + '\\abstract_data.pkl', 'rb'))
 print(' * Loading embed')
-abstract_embed = pickle.load(open(path + 'abstract_embed.pkl', 'rb'))
+abstract_embed = pickle.load(open(path + '\\abstract_embed.pkl', 'rb'))
 
 
 def get_db():
@@ -65,7 +65,7 @@ def question():
         answer = []
         for i in index:
             answer.append({
-                'score': round(corr[i], 2),
+                'score': format(corr[i], '.2f'),
                 'data': abstract_data[i]
             })
         return Response(dumps(answer), mimetype="application/json")

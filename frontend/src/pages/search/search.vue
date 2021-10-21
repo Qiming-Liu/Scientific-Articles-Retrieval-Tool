@@ -48,9 +48,9 @@ export default {
       let prefixes = ['which', 'what', 'whose', 'who', 'whom', 'where', 'whither', 'whence', 'when', 'how', 'why', 'whether'];
       let suffixes = ['.', '!', '?'];
       if (value.split(' ').length > 3 || this.startsWithAny(prefixes, value) || this.endsWithAny(suffixes, value)) {
-        this.$router.push('/result_sent?text=' + encodeURI(value));
+        this.$router.push('/Sentence/Result?text=' + encodeURI(value));
       } else {
-        this.$router.push('/result_word?name=' + encodeURI(value));
+        this.$router.push('/Word/Result?name=' + encodeURI(value));
       }
     },
   },

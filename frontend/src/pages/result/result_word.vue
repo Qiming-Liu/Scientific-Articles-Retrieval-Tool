@@ -1,6 +1,22 @@
 <template>
   <div class="result" :style="`min-height: ${pageMinHeight}px`">
     <a-row style="margin: 0 -12px">
+      <a-col style="padding: 0 12px" :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
+        <a-card id="header" :title="'Keyword: [' + this.$route.query.name + ']'">
+          <a-form layout="inline">
+            <a-form-item label="Bloom">
+              <a-radio-group default-value="1">
+                <a-radio-button value="1">
+                  On
+                </a-radio-button>
+                <a-radio-button value="0">
+                  Off
+                </a-radio-button>
+              </a-radio-group>
+            </a-form-item>
+          </a-form>
+        </a-card>
+      </a-col>
       <a-col style="padding: 0 12px" :xl="12" :lg="24" :md="24" :sm="24" :xs="24">
         <a-card id="graph-card" style="margin-top: 24px" title="Graph">
           <div ref="graph" id="graph" style="max-height: 500px"></div>
@@ -56,8 +72,8 @@ export default {
     };
   },
   mounted() {
-    this.$nextTick(()=>{
-      this.initGraph().then(()=>{
+    this.$nextTick(() => {
+      this.initGraph().then(() => {
         this.graph.width(this.$refs.graph.clientWidth)
         this.graph.height(this.$refs.graph.clientHeight)
       });
@@ -150,5 +166,9 @@ export default {
 <style>
 #graph-card .ant-card-body {
   padding: 0 !important;
+}
+
+#header {
+  border: 0;
 }
 </style>
