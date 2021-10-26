@@ -19,6 +19,7 @@ const assetsCDN = {
     clipboard: 'ClipboardJS',
     '@antv/data-set': 'DataSet',
     'js-cookie': 'Cookies',
+    mark: 'mark'
   },
   css: [
   ],
@@ -31,6 +32,7 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js',
     '//cdn.jsdelivr.net/npm/@antv/data-set@0.11.4/build/data-set.min.js',
     '//cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js',
+    '//cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js'
   ]
 }
 

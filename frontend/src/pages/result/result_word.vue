@@ -5,7 +5,7 @@
         <a-card id="header" :title="'Keyword: [' + this.$route.query.name + ']'">
           <a-form layout="inline">
             <a-form-item label="Bloom">
-              <a-radio-group default-value="1">
+              <a-radio-group v-model="bloom" @change="bloomOnChange">
                 <a-radio-button value="1">
                   On
                 </a-radio-button>
@@ -43,6 +43,7 @@
 import {mapState} from 'vuex'
 import ForceGraph3D from "3d-force-graph";
 import {UnrealBloomPass} from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import merge from 'webpack-merge';
 
 export default {
   name: "result",
@@ -69,13 +70,14 @@ export default {
       ],
       graph: null,
       name: this.$route.params.query,
+      bloom: '1'
     };
   },
   mounted() {
     this.$nextTick(() => {
       this.initGraph().then(() => {
-        this.graph.width(this.$refs.graph.clientWidth)
-        this.graph.height(this.$refs.graph.clientHeight)
+        this.graph.width(this.$refs.graph.clientWidth);
+        this.graph.height(this.$refs.graph.clientHeight);
       });
     });
   },
@@ -84,24 +86,34 @@ export default {
     tableColumns() {
       let columns = this.columns
       return columns.map(item => {
-        item.title = this.$t(item.key)
-        return item
+        item.title = this.$t(item.key);
+        return item;
       })
     }
   },
   methods: {
+    bloomOnChange(e) {
+      this.bloom = e.target.value;
+      this.$router.push({
+        query: merge(this.$route.query, {'bloom': this.bloom})
+      })
+    },
     async initGraph() {
       let limit = this.$route.query.limit;
       let bloom = this.$route.query.bloom;
       let name = this.$route.query.name;
       if (limit === undefined) {
-        limit = "1000";
+        limit = '1000';
       }
-      if (bloom === undefined) {
-        bloom = "1";
+      if (bloom === undefined || bloom === '1') {
+        bloom = '1';
+        this.bloom = bloom;
+      } else {
+        bloom = '0';
+        this.bloom = bloom;
       }
       if (name === undefined) {
-        name = "covid";
+        name = 'covid';
       }
       this.graph = ForceGraph3D({
         controlType: "trackball",
@@ -158,7 +170,7 @@ export default {
             object: links[i].target.name,
           });
         }
-      }, 1000)
+      }, 1000);
     },
   }
 };

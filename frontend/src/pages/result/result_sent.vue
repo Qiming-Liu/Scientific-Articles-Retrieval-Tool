@@ -23,6 +23,7 @@
 import RankingList from '../../components/chart/RankingList'
 import axios from "axios";
 import {mapState} from "vuex";
+import Mark from 'mark.js';
 
 export default {
   name: 'result',
@@ -45,22 +46,20 @@ export default {
   components: {RankingList},
   methods: {
     onclick(index) {
-      this.text = this.highlight(this.rankList[index].name);
+      this.text = this.rankList[index].name;
+      this.highlight();
       this.top = index + 1;
     },
-    highlight(text) {
-      let keywords = this.$route.query.text.split(' ');
-      let str = text.split(' ');
-      if (keywords && keywords.length > 0) {
-        for (let i = 0; i < str.length; i++) {
-          for (let j = 0; j < keywords.length; j++) {
-            if (str[i].toLowerCase().indexOf(keywords[j]) !== -1 && str[i].length - keywords[j].length < 3) {
-              str[i] = '<span class="highlight"><b>' + str[i] + '</b></span>';
-            }
-          }
+    highlight() {
+      this.$nextTick(() => {
+        let keywords = this.$route.query.text;
+        if (keywords !== undefined) {
+          new Mark(document.querySelector("#popContainer > section > section > main > div > div.tabs-view-content.side.fixed > div > div > div > div > div.ant-col.ant-col-xs-24.ant-col-sm-24.ant-col-md-24.ant-col-lg-24.ant-col-xl-6 > div > div.ant-card-body > p"))
+              .mark(keywords, {
+                ignoreJoiners: true
+              });
         }
-      }
-      return str.join(' ');
+      });
     },
     query() {
       let text = this.$route.query.text;
@@ -85,7 +84,8 @@ export default {
               })
             }
             this.loading = false;
-            this.text = this.highlight(this.rankList[0].name);
+            this.text = this.rankList[0].name;
+            this.highlight();
           })
           .catch((error) => {
             // handle error
@@ -104,9 +104,13 @@ export default {
   color: black;
 }
 
-.highlight {
-  color: red !important;
+mark {
+  background: none;
+  padding: 0;
+  color: red;
+  font-weight: bold;
 }
+
 
 #header {
   border: 0;

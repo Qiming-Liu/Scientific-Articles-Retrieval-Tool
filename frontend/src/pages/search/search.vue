@@ -50,7 +50,7 @@ export default {
       if (value.split(' ').length > 3 || this.startsWithAny(prefixes, value) || this.endsWithAny(suffixes, value)) {
         this.$router.push('/Sentence/Result?text=' + encodeURI(value));
       } else {
-        this.$router.push('/Word/Result?name=' + encodeURI(value));
+        this.$router.push('/Word/Result?bloom=1&name=' + encodeURI(value));
       }
     },
   },
