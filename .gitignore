@@ -1,0 +1,13 @@
+/firebase
+/.idea
+/ie_script/.ipynb_checkpoints
+/ie_script/data
+/ie_script/data_split
+/ie_script/model
+/ie_script/result_minie
+/ie_script/result_openie
+/ie_script/abstract_data.pkl
+/ie_script/abstract_embed.pkl
+/ie_script/cleaned_data.sav
+/ie_script/minie-entity.csv
+/ie_script/minie-relation.csv
