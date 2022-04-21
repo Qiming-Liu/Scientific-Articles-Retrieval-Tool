@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -11,6 +12,35 @@ import {
   InputAdornment,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+
+const startsWithAny = (string) => {
+  const prefixes = [
+    'which',
+    'what',
+    'whose',
+    'who',
+    'whom',
+    'where',
+    'whither',
+    'whence',
+    'when',
+    'how',
+    'why',
+    'whether',
+  ];
+  for (const prefix of prefixes) {
+    if (string.startsWith(prefix)) return true;
+  }
+  return false;
+};
+
+const endsWithAny = (string) => {
+  const suffixes = ['.', '!', '?'];
+  for (const suffix of suffixes) {
+    if (string.endsWith(suffix)) return true;
+  }
+  return false;
+};
 
 const Index = () => {
   const router = useRouter();
@@ -26,9 +56,25 @@ const Index = () => {
           sx={{ width: '100%' }}
           onSubmit={(event) => {
             event.preventDefault();
-            router.push({
-              pathname: `/search/${keyword}`,
-            });
+            if (keyword === '') {
+              return;
+            }
+            setKeyword(keyword.toLowerCase());
+            // check whether it is a sentence
+            // 1. word count > 3 or 2.end with .!? or 3.stat with question words
+            if (
+              keyword.split(' ').length > 3 ||
+              startsWithAny(keyword) ||
+              endsWithAny(keyword)
+            ) {
+              router.push({
+                pathname: `/search/sentence/${keyword}`,
+              });
+            } else {
+              router.push({
+                pathname: `/search/keyword/${keyword}`,
+              });
+            }
           }}
         >
           <TextField

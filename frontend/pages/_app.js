@@ -5,11 +5,11 @@ import Router from 'next/router';
 import { ThemeProvider } from '@mui/material/styles';
 import NextNProgress from 'nextjs-progressbar';
 import CssBaseline from '@mui/material/CssBaseline';
+import Layout from '@components/Layout';
+import Navbar from '@components/Navbar';
+import Loading from '@components/Loading';
 import createTheme from '../theme';
-import Layout from '../components/Layout';
-import Navbar from '../components/Navbar';
-import Loading from '../components/Loading';
-import '../styles/main.scss';
+import '@styles/main.scss';
 
 const MyApp = ({ Component, pageProps: { session, ...pageProps } }) => {
   const [isLoading, setIsLoading] = useState(false);

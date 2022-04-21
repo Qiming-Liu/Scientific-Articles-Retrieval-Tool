@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Card, CardHeader, Container, Divider, Grid } from '@mui/material';
-import { MeshQuery } from '../../services/Public';
-import PropertyList from '../../components/PropertyList';
-import PropertyListItem from '../../components/PropertyList/item';
-import SynonymsList from '../../components/SynonymsList';
-import TreeInfoAccordion from '../../components/TreeInfoAccordion';
-import SeeAlsoList from '../../components/SeeAlsoList';
+import { MeshQuery } from '@services/Public';
+import PropertyList from '@components/PropertyList';
+import PropertyListItem from '@components/PropertyList/item';
+import SynonymsList from '@components/SynonymsList';
+import TreeInfoAccordion from '@components/TreeInfoAccordion';
+import SeeAlsoList from '@components/SeeAlsoList';
 
 const Search = () => {
   const router = useRouter();

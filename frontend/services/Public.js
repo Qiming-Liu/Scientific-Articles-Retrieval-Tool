@@ -1,4 +1,4 @@
-import http from '../utils/axios';
+import http from '@utils/axios';
 
 // Users
 export const MeshQuery = (keyword) =>

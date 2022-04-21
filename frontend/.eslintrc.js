@@ -10,7 +10,6 @@ module.exports = {
     'airbnb/hooks',
     'plugin:prettier/recommended',
   ],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -18,7 +17,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: ['react', '@typescript-eslint'],
+  plugins: ['react'],
   rules: {
     'react/function-component-definition': [
       2,
@@ -33,5 +32,23 @@ module.exports = {
         endOfLine: 'auto',
       },
     ],
+  },
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [
+          ['@components', './components'],
+          ['@pages', './pages'],
+          ['@services', './services'],
+          ['@styles', './styles'],
+          ['@theme', './theme'],
+          ['@utils', './utils'],
+        ],
+        extensions: ['.ts', '.js', '.jsx', '.json'],
+      },
+      node: {
+        paths: ['./'],
+      },
+    },
   },
 };
