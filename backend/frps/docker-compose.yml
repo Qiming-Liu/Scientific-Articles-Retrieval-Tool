@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  frps:
+    container_name: frps
+    image: snowdreamtech/frps
+    hostname: frps
+    volumes:
+      - ./frps.ini:/etc/frp/frps.ini
+    ports:
+      - "7001:7001"
+      - "443:443"

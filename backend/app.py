@@ -19,19 +19,19 @@ password = "1234"
 database = "kg-minie"
 
 driver = GraphDatabase.driver(uri, auth=(username, password))
+path = os.getcwd()
 
 # flask
-app = Flask(__name__, instance_path="C:\\Users\\pross\\Desktop\\project\\github\\backend")
+app = Flask(__name__, instance_path=path)
 CORS(app)
 
 # question answering
 print(' * Loading model')
-path = "C:\\Users\\pross\\Desktop\\project\\github\\ie_script"
-embed = load(path + "\\model")
+embed = load(path + "\\embed\\model")
 print(' * Loading data')
-abstract_data = pickle.load(open(path + '\\abstract_data.pkl', 'rb'))
+abstract_data = pickle.load(open(path + '\\embed\\abstract_data.pkl', 'rb'))
 print(' * Loading embed')
-abstract_embed = pickle.load(open(path + '\\abstract_embed.pkl', 'rb'))
+abstract_embed = pickle.load(open(path + '\\embed\\abstract_embed.pkl', 'rb'))
 
 
 def get_db():
@@ -49,7 +49,6 @@ def close_db(error):
 @app.route("/")
 def get_index():
     return "<p>Hello, World!</p>"
-    # return app.send_static_file('index.html')
 
 
 @app.route("/question")
@@ -153,4 +152,4 @@ def search():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=443, ssl_context=('secret.pem', 'secret.key'))
+    app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5000, ssl_context=('secret.pem', 'secret.key'))

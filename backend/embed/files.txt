@@ -1,0 +1,3 @@
+./model/(https://tfhub.dev/google/universal-sentence-encoder-large/5)
+abstract_embed.pkl
+abstract_data.pkl
