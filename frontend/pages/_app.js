@@ -8,6 +8,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Layout from '@components/Layout';
 import Navbar from '@components/Navbar';
 import Loading from '@components/Loading';
+import NextClientOnly from '@components/NextClientOnly';
 import createTheme from '../theme';
 import '@styles/main.scss';
 
@@ -27,13 +28,15 @@ const MyApp = ({ Component, pageProps: { session, ...pageProps } }) => {
         <meta name="viewport" content="initial-scale=1, width=device-width" />
       </Head>
       <CssBaseline />
-      <Layout>
-        <>
-          <Toaster position="top-center" reverseOrder={false} />
-          <Navbar />
-        </>
-        {isLoading ? <Loading /> : <Component {...pageProps} />}
-      </Layout>
+      <NextClientOnly>
+        <Layout>
+          <>
+            <Toaster position="top-center" reverseOrder={false} />
+            <Navbar />
+          </>
+          {isLoading ? <Loading /> : <Component {...pageProps} />}
+        </Layout>
+      </NextClientOnly>
     </ThemeProvider>
   );
 };

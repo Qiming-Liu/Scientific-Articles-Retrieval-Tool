@@ -110,7 +110,7 @@ def overview():
 @app.route("/search")
 def search():
     try:
-        name = request.args["name"]
+        name = request.args["keyword"]
     except KeyError:
         return []
     else:

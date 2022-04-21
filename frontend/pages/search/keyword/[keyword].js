@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Card, CardHeader, Container, Divider, Grid } from '@mui/material';
+import { Card, CardHeader, Container, Divider, Grid } from '@mui/material';
 import { MeshQuery } from '@services/Public';
 import PropertyList from '@components/PropertyList';
 import PropertyListItem from '@components/PropertyList/item';
@@ -13,9 +13,10 @@ const Search = () => {
   const { keyword } = router.query;
   const [meshData, setMeshData] = React.useState([]);
   useEffect(() => {
-    const getMesh = async () => {
-      const { data } = await MeshQuery(keyword);
-      setMeshData(data);
+    const getMesh = () => {
+      MeshQuery(keyword).then((data) => {
+        setMeshData(data.data);
+      });
     };
     getMesh();
   }, [keyword]);
@@ -23,6 +24,23 @@ const Search = () => {
   return (
     <Container maxWidth="xl">
       <Grid container direction="row" spacing={3}>
+        <Grid item xs={12} sx={{ pl: 2 }}>
+          <Card>
+            <CardHeader title="Graph" />
+            <Divider />
+            <iframe
+              height={500}
+              width="100%"
+              title="Graph"
+              frameBorder="0"
+              src={`/graph.html?keyword=${keyword}`}
+              style={{
+                display: 'block',
+                border: 'none',
+              }}
+            />
+          </Card>
+        </Grid>
         <Grid item xs={6} sx={{ pl: 2 }}>
           <Card>
             <CardHeader title={keyword} />
@@ -40,25 +58,10 @@ const Search = () => {
                 label="Description"
                 value={meshData.desc}
               />
-            </PropertyList>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sx={{ pl: 2 }}>
-          <Card>
-            <CardHeader title="Graph" />
-            <Divider />
-            <Box sx={{ height: 500, backgroundColor: '#000' }} />
-          </Card>
-        </Grid>
-
-        <Grid item xs={6}>
-          <Card>
-            <CardHeader title="Synonyms" />
-            <Divider />
-            <PropertyList>
               <PropertyListItem
                 align="Synonyms"
                 divider
+                label="Synonyms"
                 value={<SynonymsList data={meshData.synonyms} />}
               />
             </PropertyList>
@@ -73,7 +76,10 @@ const Search = () => {
                 align="Tree Info"
                 divider
                 value={
-                  <TreeInfoAccordion data={meshData.treeInfo} name={keyword} />
+                  <TreeInfoAccordion
+                    data={meshData.treeInfo}
+                    keyword={keyword}
+                  />
                 }
               />
               <PropertyListItem
@@ -83,13 +89,6 @@ const Search = () => {
                 value={<SeeAlsoList data={meshData.seealso} />}
               />
             </PropertyList>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sx={{ pl: 2 }}>
-          <Card>
-            <CardHeader title="Sentences" />
-            <Divider />
-            <Box sx={{ height: 500, backgroundColor: '#fff' }} />
           </Card>
         </Grid>
       </Grid>

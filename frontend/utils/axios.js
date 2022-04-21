@@ -3,7 +3,6 @@ import axios from 'axios';
 
 const getInstance = () => {
   const axiosInstance = axios.create();
-  axiosInstance.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   axiosInstance.interceptors.response.use(
     (config) => {

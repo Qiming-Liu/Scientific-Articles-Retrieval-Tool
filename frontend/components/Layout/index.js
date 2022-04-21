@@ -23,7 +23,7 @@ const Layout = ({ children }) => {
           alignItems: 'center',
           width: '100%',
           flexGrow: 1,
-          py: 4,
+          py: 2,
         }}
       >
         {children[1]}

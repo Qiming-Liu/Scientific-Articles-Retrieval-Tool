@@ -15,13 +15,13 @@ const SingleTIA = ({ tree }) => {
       sx={{ m: -1, p: 0 }}
     >
       <AccordionSummary sx={{ m: -1 }}>
-        <NextLink href={`/search/${tree.name}`} passHref>
+        <NextLink href={`/search/${tree.keyword}`} passHref>
           <Typography
             sx={{ display: 'inline' }}
             component="span"
             variant="body2"
             color="text.primary"
-          >{`${tree.id} | ${tree.name}`}</Typography>
+          >{`${tree.id} | ${tree.keyword}`}</Typography>
         </NextLink>
       </AccordionSummary>
       {tree.child && (
@@ -33,7 +33,7 @@ const SingleTIA = ({ tree }) => {
   );
 };
 
-const TreeInfoAccordion = ({ data, name }) => {
+const SentenceAccordion = ({ data, keyword }) => {
   if (!data) {
     return null;
   }
@@ -44,7 +44,7 @@ const TreeInfoAccordion = ({ data, name }) => {
       if (index === 0) {
         tree[item][index].child = {
           id: item,
-          name,
+          keyword,
         };
       } else {
         tree[item][index].child = tree[item][index - 1];
@@ -61,4 +61,4 @@ const TreeInfoAccordion = ({ data, name }) => {
   );
 };
 
-export default TreeInfoAccordion;
+export default SentenceAccordion;

@@ -1,95 +1,40 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Box, Card, CardHeader, Container, Divider, Grid } from '@mui/material';
-import { MeshQuery } from '@services/Public';
+import { Card, CardHeader, Container, Divider, Grid } from '@mui/material';
+import { EmbedQuery } from '@services/Public';
 import PropertyList from '@components/PropertyList';
 import PropertyListItem from '@components/PropertyList/item';
-import SynonymsList from '@components/SynonymsList';
-import TreeInfoAccordion from '@components/TreeInfoAccordion';
-import SeeAlsoList from '@components/SeeAlsoList';
+import SentenceAccordion from '@components/SentenceAccordion';
 
 const Search = () => {
   const router = useRouter();
-  const { keyword } = router.query;
-  const [meshData, setMeshData] = React.useState([]);
+  const { sentence } = router.query;
+  const [embedData, setEmbedData] = React.useState([]);
   useEffect(() => {
     const getMesh = async () => {
-      const { data } = await MeshQuery(keyword);
-      setMeshData(data);
+      const { data } = await EmbedQuery(10, sentence);
+      setEmbedData(data);
     };
     getMesh();
-  }, [keyword]);
+  }, [sentence]);
 
   return (
     <Container maxWidth="xl">
       <Grid container direction="row" spacing={3}>
-        <Grid item xs={6} sx={{ pl: 2 }}>
+        <Grid item xs={12} sx={{ pl: 2 }}>
           <Card>
-            <CardHeader title={keyword} />
+            <CardHeader title={sentence} />
             <Divider />
             <PropertyList>
               <PropertyListItem
-                align="ID"
+                align="Answers"
                 divider
-                label="ID"
-                value={meshData.id}
-              />
-              <PropertyListItem
-                align="Description"
-                divider
-                label="Description"
-                value={meshData.desc}
-              />
-            </PropertyList>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sx={{ pl: 2 }}>
-          <Card>
-            <CardHeader title="Graph" />
-            <Divider />
-            <Box sx={{ height: 500, backgroundColor: '#000' }} />
-          </Card>
-        </Grid>
-
-        <Grid item xs={6}>
-          <Card>
-            <CardHeader title="Synonyms" />
-            <Divider />
-            <PropertyList>
-              <PropertyListItem
-                align="Synonyms"
-                divider
-                value={<SynonymsList data={meshData.synonyms} />}
-              />
-            </PropertyList>
-          </Card>
-        </Grid>
-        <Grid item xs={6}>
-          <Card>
-            <CardHeader title="Tree Info" />
-            <Divider />
-            <PropertyList>
-              <PropertyListItem
-                align="Tree Info"
-                divider
+                label="Answers"
                 value={
-                  <TreeInfoAccordion data={meshData.treeInfo} name={keyword} />
+                  <SentenceAccordion data={embedData} sentence={sentence} />
                 }
               />
-              <PropertyListItem
-                align="See Also"
-                divider
-                label="See Also"
-                value={<SeeAlsoList data={meshData.seealso} />}
-              />
             </PropertyList>
-          </Card>
-        </Grid>
-        <Grid item xs={6} sx={{ pl: 2 }}>
-          <Card>
-            <CardHeader title="Sentences" />
-            <Divider />
-            <Box sx={{ height: 500, backgroundColor: '#fff' }} />
           </Card>
         </Grid>
       </Grid>
