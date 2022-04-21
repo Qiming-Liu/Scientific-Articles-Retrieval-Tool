@@ -1,23 +1,25 @@
 # Scientific-Articles-Retrieval-Tool
+<p align="center"><img src="./assets/index.png"></p>
 
-### Data
+### Data&model
 > [Click here](https://universityofadelaide.app.box.com/folder/147443411383)
 
-
-### Front end
+### Front-end
 ```shell
-# dependence
-yarn install
-# debug
-yarn serve
+# install dependence
+yarn
+# development
+yarn dev
 # build
 yarn build
+# run
+yarn start
 ```
 > yarn latest required
 
-### Back end
+### Back-end
 ```shell
-# dependence
+# install dependence
 pip install -r requirements.txt
 # run
 python app.py
