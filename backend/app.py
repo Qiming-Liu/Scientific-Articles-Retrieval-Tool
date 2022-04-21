@@ -12,11 +12,11 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 from tensorflow_hub import load
 
 # neo4j
-uri = "bolt://localhost:7687"
-neo4jVersion = "4.3.5"
+uri = "neo4j://localhost:7687"
+neo4jVersion = "4.4.5"
 username = "neo4j"
-password = "1234"
-database = "kg-minie"
+password = "123456"
+database = "minio"
 
 driver = GraphDatabase.driver(uri, auth=(username, password))
 path = os.getcwd()

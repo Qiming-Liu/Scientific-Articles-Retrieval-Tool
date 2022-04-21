@@ -13,3 +13,11 @@
 /ie_script/minie-relation.csv
 /frontend/.vscode
 /umls
+/backend/embed/model
+/backend/embed/abstract_data.pkl
+/backend/embed/abstract_embed.pkl
+/backend/neo4j/data
+/backend/neo4j/logs
+/backend/neo4j/plugins
+/backend/neo4j/import/minie-entity.csv
+/backend/neo4j/import/minie-relation.csv
