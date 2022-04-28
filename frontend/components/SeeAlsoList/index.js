@@ -12,7 +12,7 @@ const SeeAlsoList = ({ data }) => {
     <List sx={{ width: '100%', bgcolor: 'background.paper', m: -1 }}>
       {data.map((item) => (
         <ListItem alignItems="flex-start" sx={{ p: 0.2 }}>
-          <NextLink href={`/search/${item.term_name}`} passHref>
+          <NextLink href={`/search/keyword/${item.term_name}`} passHref>
             <Typography
               sx={{
                 display: 'inline',
