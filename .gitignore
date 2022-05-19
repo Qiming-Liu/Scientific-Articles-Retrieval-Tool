@@ -21,3 +21,5 @@
 /backend/neo4j/plugins
 /backend/neo4j/import/minie-entity.csv
 /backend/neo4j/import/minie-relation.csv
+/ie_script/body_text
+/ie_script/abstract.json
