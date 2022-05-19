@@ -1,6 +1,0 @@
-[submodule "ie_script/openie6_python"]
-	path = ie_script/openie6_python
-	url = https://github.com/Qiming-Liu/openie6-docker.git
-[submodule "ie_script/minie_java"]
-	path = ie_script/minie_java
-	url = https://github.com/Qiming-Liu/minie-docker.git
