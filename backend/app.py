@@ -28,11 +28,8 @@ CORS(app)
 # question answering
 print(' * Loading model')
 embed = load(path + "\\embed\\model")
-print(' * Loading data')
-abstract_data = pickle.load(open(path + '\\embed\\abstract_data.pkl', 'rb'))
 print(' * Loading embed')
-abstract_embed = pickle.load(open(path + '\\embed\\abstract_embed.pkl', 'rb'))
-
+abstract_data, abstract_embed = pickle.load(open(path + '\\embed\\abstract_qa.pkl', 'rb'))
 
 def get_db():
     if not hasattr(g, 'neo4j_db'):

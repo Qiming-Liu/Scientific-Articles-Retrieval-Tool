@@ -23,3 +23,5 @@
 /backend/neo4j/import/minie-relation.csv
 /ie_script/body_text
 /ie_script/abstract.json
+/ie_script/for_biobert
+/backend/embed/abstract_qa.pkl
