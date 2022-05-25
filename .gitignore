@@ -25,3 +25,5 @@
 /ie_script/abstract.json
 /ie_script/for_biobert
 /backend/embed/abstract_qa.pkl
+/backend/neo4j/import/entity.csv
+/backend/neo4j/import/relation.csv

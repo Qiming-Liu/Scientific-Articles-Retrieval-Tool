@@ -3,8 +3,6 @@ services:
   neo4j:
     container_name: neo4j
     image: neo4j:4.4.5-enterprise
-    volumes:
-      - ./frps.ini:/etc/frp/frps.ini
     ports:
       - "7474:7474"
       - "7687:7687"

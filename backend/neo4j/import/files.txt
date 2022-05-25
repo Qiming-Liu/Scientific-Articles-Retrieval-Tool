@@ -1,2 +1,2 @@
-minie-entity.csv
-minie-relation.csv
+entity.csv
+relation.csv
