@@ -18,7 +18,7 @@ const Search = () => {
         setMeshData(data.data);
       });
     };
-    if (meshData !== undefined) {
+    if (keyword) {
       getMesh();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -44,6 +44,7 @@ const Search = () => {
             />
           </Card>
         </Grid>
+
         {meshData && (
           <>
             <Grid item xs={6} sx={{ pl: 2 }}>
