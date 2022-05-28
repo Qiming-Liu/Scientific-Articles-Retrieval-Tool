@@ -37,7 +37,9 @@ const TreeInfoAccordion = ({ data, keyword }) => {
   if (!data) {
     return null;
   }
-  console.log(data);
+  if (data.length === 0) {
+    return 'No data';
+  }
   const treeList = [];
   Object.keys(data).forEach((item) => {
     const tree = data;

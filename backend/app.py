@@ -113,10 +113,10 @@ def search():
     else:
         db = get_db()
         results = db.read_transaction(lambda tx: list(tx.run("MATCH (s)-[r]->(o) "
-                                                             "WHERE s.entity_name =~ $name "
+                                                             "WHERE s.entity_name CONTAINS $name "
                                                              "RETURN properties(s) as subject, properties(r) as relation, properties(o) as object "
                                                              "LIMIT $limit",
-                                                             {"name": "(?i).*" + name + ".*",
+                                                             {"name": name,
                                                               "limit": int(request.args.get("limit", 1000))})))
         nodes = {}
         links = []

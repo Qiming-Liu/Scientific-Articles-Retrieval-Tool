@@ -9,11 +9,14 @@ import SentenceAccordion from '@components/SentenceAccordion';
 const Search = () => {
   const router = useRouter();
   const { sentence } = router.query;
+  const [loading, setLoading] = React.useState(false);
   const [embedData, setEmbedData] = React.useState([]);
   useEffect(() => {
     const getMesh = async () => {
+      setLoading(true);
       const { data } = await EmbedQuery(10, sentence);
       setEmbedData(data);
+      setLoading(false);
     };
     getMesh();
   }, [sentence]);
@@ -31,7 +34,11 @@ const Search = () => {
                 divider
                 label="Answers"
                 value={
-                  <SentenceAccordion data={embedData} sentence={sentence} />
+                  loading ? (
+                    'Loading...'
+                  ) : (
+                    <SentenceAccordion data={embedData} sentence={sentence} />
+                  )
                 }
               />
             </PropertyList>

@@ -8,6 +8,9 @@ const SeeAlsoList = ({ data }) => {
   if (!data) {
     return null;
   }
+  if (data.length === 0) {
+    return 'No data';
+  }
   return (
     <List sx={{ width: '100%', bgcolor: 'background.paper', m: -1 }}>
       {data.map((item) => (
